@@ -1,0 +1,242 @@
+img 
+{
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+.ScrollAblePage
+{
+    width: 80%;
+    height: 100%;
+
+    margin-top: 2%;
+    margin-left: auto;
+    margin-right: auto;
+
+    z-index: 2; 
+    position: relative;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 20px;
+    text-align: center;
+
+    color: gray;
+
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.692);
+}
+
+.textContainer
+{
+    margin-left: 10px;
+    margin-right: 10px;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.externalRefs
+{
+    filter: contrast(0.0);
+}
+
+.ListPrgLanguages
+{
+    position: relative; 
+    display: inline-block;
+    align-items: center;
+    font-size: 20px;
+}
+
+.ListPrgLanguages div
+{
+    width: 250px;
+    height: 400px;
+
+    position: relative;
+
+    background-color: rgba(255, 255, 255, 0.589);
+
+    outline-width: 1px;
+    outline-color:rgb(255, 255, 255);
+    outline-style: solid;
+}
+
+#PrgCplusplus
+{
+    height: 354px;
+    background-color: rgba(177, 231, 213);
+}
+
+#PrgCSharp
+{
+    height: 354px;
+    background-color: rgba(181, 231, 177);
+}
+
+#PrgJs
+{
+    height: 354px;
+    background-color: rgba(230, 231, 177);
+}
+
+#PrgPhp
+{
+    height: 354px;
+    background-color: rgb(196, 177, 231);
+}
+
+#sunBorder
+{
+
+}
+
+#StaticBar
+{
+    z-index: 2;
+    left: 1px;
+    right: 1px;
+    top: 0px;
+    width: 100% - 2px;
+    height: 140px;
+    position: fixed;
+    border-radius: 0px;
+    background-color: rgba(46, 46, 46);
+    color: rgb(255, 255, 255);
+    box-sizing: border-box;
+
+    font-family: "DM Sans", sans-serif;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+
+    outline-style: solid;
+    outline-width: 3px;
+    outline-color: rgb(255, 255, 255);
+}
+
+#StaticHideShowBtn
+{
+    position:absolute;
+
+    top: 1px;
+    left: 1px;
+
+    width: 80px; 
+    height: 50px;
+
+    border-radius: 0px;
+
+    background-color: rgb(46, 46, 46);
+}
+
+#MainHeaderText
+{
+    display: flex; 
+    flex-direction: row;
+     align-items: center; 
+     justify-content: center; 
+     text-align: center; 
+     font-size: 52px; 
+     font-weight: bold;
+}
+
+#RefsHeader
+{
+    margin-left: 82%;
+    list-style-type: none;
+
+    float: left;
+    clear: left;
+
+    display: inline-block;
+}
+
+#BackgroundCanvas
+{
+    z-index: -1;
+
+    position: fixed;
+    left: 0px;
+}
+
+.SunContainer 
+{
+    position: fixed;
+    top: 290px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 128px;  
+    height: 128px; 
+    z-index: 1;
+}
+
+.Sun 
+{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#Sunrays 
+{
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    left: -50%;
+    top: -50%;
+}
+
+@keyframes PrgLanguagesToggle
+{
+    0%
+    {
+        height: 354px;
+        width: 100%;
+    }
+    100%
+    {
+        height: 0px;
+        width: 0%;
+    }
+}
+
+@keyframes StaticBarToggle 
+{ 
+    0% 
+    {
+        height: 140px;
+        width: 100%;
+    }
+    30%
+    {
+        top: 0px;
+        left: 0px;
+        width: 10%;
+        border-radius: 0px;
+    }
+    50%
+    {
+        left: -45%;
+    }
+    100% 
+    {
+        top: 00px;
+        left: 0;
+        height: 80px;
+        width: 7%;
+        border-radius: 2px;
+    }
+}
+
+@keyframes BackgroundColorChange
+{
+    0%
+    {
+        background-color: rgb(10, 0, 65);
+    }
+    100%
+    {
+        background-color: rgb(0, 187, 109);
+    }
+}
