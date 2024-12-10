@@ -1,115 +1,4 @@
-class Color
-{
-    constructor(r,g,b,a)
-    {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
-    }
-
-    static hexToColor(value) 
-    {
-        let colorOut = new Color(
-            (value >> 16) & 0xff,
-            (value >> 8) & 0xff,
-            value & 0xff,
-            255                   
-        );
-        return colorOut;
-    }
-    
-
-    getHex()
-    {
-        if (this.a === 255) 
-            {
-            return (this.r << 16) | (this.g << 8) | this.b;
-        }
-        return (this.a << 24) | (this.r << 16) | (this.g << 8) | this.b;
-    }
-
-    sub(color)
-    {
-        let colourOut = new Color(this.r - color.r, 
-            this.g - color.g, this.b - color.b, this.a - color.a
-        );
-
-        return colourOut;
-    }
-
-    clamp() 
-    {
-        this.r = Math.max(0, Math.min(255, this.r));
-        this.g = Math.max(0, Math.min(255, this.g));
-        this.b = Math.max(0, Math.min(255, this.b));
-        this.a = Math.max(0, Math.min(255, this.a));
-
-        return this;
-    }
-
-
-    add(color)
-    {
-        let colourOut = new Color(this.r + color.r, 
-            this.g + color.g, this.b + color.b, this.a + color.a
-        );
-
-        return colourOut;
-    }
-
-    div(value)
-    {
-        let colourOut = new Color(this.r / value, 
-            this.g / value, this.b / value, this.a / value
-        );
-
-        return colourOut;
-    }
-
-    mul(value)
-    {
-        let colourOut = new Color(this.r * value, 
-            this.g * value, this.b * value, this.a * value
-        );
-
-        return colourOut; 
-    }
-
-    copy()
-    {
-        return new Color(this.r, 
-            this.g, this.b, this.a
-        ); 
-    }
-
-    getMagnitude()
-    {
-        return Math.sqrt(this.r * this.r + this.g * 
-            this.g + this.b * this.b + this.a * this.a);
-    }
-
-    normalizeColor()
-    {
-        const magnitude = this.getMagnitude();
-
-        this.r = this.r / magnitude;
-        this.g = this.g / magnitude;
-        this.b = this.b / magnitude;
-        this.a = this.a / magnitude;
-    }
-
-    normalizeColorCopy()
-    {
-        const magnitude = this.getMagnitude();
-
-        let colorOut = new Color(this.r / magnitude, this.g / magnitude,
-            this.b / magnitude, this.a / magnitude
-        );
-
-        return colorOut;
-    }
-}
+let TickCountBG = new Date().getTime();
 
 let backgroundCanvas = document.getElementById("BackgroundCanvas");
 let backgroundContext = backgroundCanvas.getContext("2d");
@@ -127,10 +16,73 @@ const nightBottom = Color.hexToColor(0x050722);
 var colorToDrawTop = sunnyTop;
 var colorToDrawBottom = sunnyBottom;
 
+let timeSpawnStars = 0.5;
+let starList = [];
+
 var rangePerDimension = 100;
+
+let starRandomStarposList = 
+[
+    {"x": 87, "y": 22},
+    {"x": 14, "y": 68},
+    {"x": 62, "y": 5},
+    {"x": 35, "y": 79},
+    {"x": 77, "y": 42},
+    {"x": 9, "y": 14},
+    {"x": 56, "y": 33},
+    {"x": 95, "y": 50},
+    {"x": 28, "y": 93},
+    {"x": 45, "y": 60},
+    {"x": 70, "y": 10},
+    {"x": 81, "y": 74},
+    {"x": 19, "y": 48},
+    {"x": 5, "y": 25},
+    {"x": 91, "y": 7},
+    {"x": 33, "y": 88},
+    {"x": 49, "y": 37},
+    {"x": 12, "y": 55},
+    {"x": 63, "y": 20},
+    {"x": 24, "y": 81},
+    {"x": 84, "y": 46},
+    {"x": 40, "y": 96},
+    {"x": 66, "y": 28},
+    {"x": 99, "y": 15},
+    {"x": 51, "y": 64},
+    {"x": 7, "y": 90},
+    {"x": 17, "y": 36},
+    {"x": 44, "y": 8},
+    {"x": 80, "y": 29},
+    {"x": 26, "y": 70},
+    {"x": 92, "y": 41},
+    {"x": 73, "y": 84},
+    {"x": 3, "y": 53},
+    {"x": 38, "y": 19},
+    {"x": 59, "y": 76},
+    {"x": 86, "y": 12},
+    {"x": 22, "y": 45},
+    {"x": 65, "y": 94},
+    {"x": 97, "y": 27},
+    {"x": 48, "y": 83},
+    {"x": 20, "y": 39},
+    {"x": 75, "y": 6},
+    {"x": 11, "y": 58},
+    {"x": 60, "y": 72},
+    {"x": 34, "y": 16},
+    {"x": 83, "y": 44},
+    {"x": 93, "y": 87},
+    {"x": 16, "y": 9},
+    {"x": 46, "y": 67},
+    {"x": 6, "y": 31}
+];  
+
+let curRndListIndex = 0;
+let isStarLeft = false;
+
 
 function DrawBackground() 
 {
+    const timeToSpawnStars = 0.5;
+
     backgroundContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
     const colorToAdd = colorToDrawBottom.sub(colorToDrawTop).div(rangePerDimension);
@@ -139,6 +91,12 @@ function DrawBackground()
 
     const width = window.innerWidth;
     const height = Math.ceil(window.innerHeight / rangePerDimension); 
+
+    let currentTick = new Date().getTime();
+
+    const deltaTime = (currentTick - TickCountBG) / 1000;
+
+    TickCountBG = currentTick;
 
     for (let i = 0; i < rangePerDimension; i++) 
     {
@@ -149,6 +107,80 @@ function DrawBackground()
 
         backgroundContext.fillStyle = color;
         backgroundContext.fillRect(0, y, width, height + 1);
+    }
+
+    const maxStarCount = 25;
+    const maxLivetimeStars = 1;
+
+    if(sunScrollPercantage >= 70)
+    {
+        if(timeSpawnStars >= timeToSpawnStars && starList.length < maxStarCount)
+        {
+            let starPosObj = starRandomStarposList[curRndListIndex];
+    
+            starList.push({pos: {x: starPosObj.x, y: starPosObj.y}, timeAlive: 0});
+    
+            if(curRndListIndex + 1 >= starRandomStarposList.length)
+                curRndListIndex = 0;
+            else 
+                curRndListIndex++;
+
+            
+            isStarLeft = true;
+        }
+        else
+        {
+            timeSpawnStars += deltaTime;
+        }
+    }
+
+    if(isStarLeft)
+    {
+        for(let p = 0; p < starList.length; p++)
+        {
+            let cachedStar = starList[p];
+    
+            if(cachedStar.timeAlive >= maxLivetimeStars)
+            {
+                removeFromList(starList, p);
+
+                if(starList.length > 0)
+                    isStarLeft = true;
+                else
+                    isStarLeft = false;
+            }
+            else
+            {
+                const innerRadius = 2.5;
+                const radius = 5;
+                const points = 5;
+
+                const x = (window.innerWidth  / 100) * cachedStar.pos.x;
+                const y = (window.innerHeight / 100) * cachedStar.pos.y;
+
+                const alphaValStar = 1.0 - (1.0 * (cachedStar.timeAlive / maxLivetimeStars));
+
+                backgroundContext.globalAlpha = alphaValStar;
+                backgroundContext.fillStyle = `rgb(255, 242, 0)`;
+    
+                backgroundContext.beginPath();
+                const angle = Math.PI / points;
+    
+                for (let i = 0; i < 2 * points; i++)
+                {
+                  const r = (i % 2 === 0) ? radius : innerRadius;
+                  const xPos = x + r * Math.cos(i * angle);
+                  const yPos = y + r * Math.sin(i * angle);
+                  backgroundContext.lineTo(xPos, yPos);
+                }
+    
+                backgroundContext.closePath();
+                backgroundContext.fill();
+    
+                cachedStar.timeAlive += deltaTime;
+            }
+            backgroundContext.globalAlpha = 1;
+        }
     }
 }
 
@@ -162,7 +194,9 @@ function updateScroll() {
     const maxSunHeight = 35;
     const scrollY = window.scrollY;
 
-    const maxScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const sunBoarderAbsPos = getAbsolutePosition(sunBorder).top;
+
+    const maxScrollHeight = sunBoarderAbsPos;
     sunScrollPercantage = Math.min(scrollY / maxScrollHeight, 1) * 100;
 
     if (sunScrollPercantage >= 100.0) 
@@ -171,6 +205,8 @@ function updateScroll() {
         {
             hasHiddenSun = true;
             sunContainer.style.display = "none";
+
+            timeSpawnStars = 0;
         }
         return;
     } else 
@@ -215,3 +251,4 @@ window.addEventListener("resize", updateCanvasDimension);
 window.addEventListener("scroll", updateScroll);
 
 updateCanvasDimension();
+updateScroll();

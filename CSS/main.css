@@ -86,6 +86,15 @@ img
     background-color: rgb(196, 177, 231);
 }
 
+#PrgButton
+{
+    display: inline-block;
+    
+    background-color: black;
+    width: inherit;
+    height: 10%;
+}
+
 #sunBorder
 {
 
