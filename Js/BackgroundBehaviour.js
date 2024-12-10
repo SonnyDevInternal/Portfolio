@@ -1,5 +1,6 @@
 let TickCountBG = new Date().getTime();
 
+
 let backgroundCanvas = document.getElementById("BackgroundCanvas");
 let backgroundContext = backgroundCanvas.getContext("2d");
 
