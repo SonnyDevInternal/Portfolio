@@ -45,6 +45,9 @@ img
     position: relative; 
     display: inline-block;
     align-items: center;
+
+    margin-top: 20px;
+
     font-size: 20px;
 }
 
@@ -62,26 +65,38 @@ img
     outline-style: solid;
 }
 
+.PrgLanguage
+{
+}
+
 #PrgCplusplus
 {
+    position: absolute;
+
     height: 354px;
     background-color: rgba(177, 231, 213);
 }
 
 #PrgCSharp
 {
+    position: absolute;
+
     height: 354px;
     background-color: rgba(181, 231, 177);
 }
 
 #PrgJs
-{
+{ 
+    position: absolute;
+
     height: 354px;
     background-color: rgba(230, 231, 177);
 }
 
 #PrgPhp
 {
+    position: absolute;
+    
     height: 354px;
     background-color: rgb(196, 177, 231);
 }
@@ -89,10 +104,18 @@ img
 #PrgButton
 {
     display: inline-block;
-    
+
     background-color: black;
+    
     width: inherit;
-    height: 10%;
+    height: 10px;
+
+    position: relative;
+}
+
+#PrgButton div
+{
+    
 }
 
 #sunBorder

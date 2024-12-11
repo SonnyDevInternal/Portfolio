@@ -13,12 +13,21 @@ class Drowpdown
         this.childrenStyleList = [];
     }
 
-    static GetDropdownByBtn(element)
+    static GetDropdownByElement(element)
     {
         for(let f = 0; f < dropdownList.length; f++)
         {
             if(dropdownList[f].btnHtmlObj == element)
                 return dropdownList[f];
+
+            let childrenCache = dropdownList[f].children;
+
+            for(let q = 0; q < childrenCache.length; q++)
+            {
+                if(childrenCache[q] == element)
+                    return dropdownList[f];
+            }
+                
         }
 
         return null;
@@ -53,11 +62,38 @@ class Drowpdown
         return this.btnHtmlObj;
     }
 
-    UpdateVisibility()
+    UpdateChildren(visible)
     {
-        if(this.active)
-        {
+        let childrenCache = this.GetChildren();
 
+        if(visible)
+        {
+            for(let i = 0; i < childrenCache.length; i++)
+            {
+                childrenCache[i].style.visibility = this.childrenStyleList[i];
+            }
+
+            this.childrenStyleList = [];
+        }
+        else
+        {
+            for(let i = 0; i < childrenCache.length; i++)
+            {
+                let currentChild = childrenCache[i];
+
+                this.childrenStyleList[i] = currentChild.style.visibility;
+                currentChild.style.visibility = "hidden";
+            }
+        }
+    }
+
+    UpdateVisibility(visible)
+    {
+        this.UpdateChildren(visible);
+
+        if(!visible)
+        {
+            
         }
         else
         {
@@ -68,8 +104,9 @@ class Drowpdown
     OnClick()
     {
         console.log("clicked item with ID: " + this.selfHtmlObj.id);
+        console.log("show item? : " + this.active);
 
-        this.UpdateVisibility();
+        this.UpdateVisibility(this.active);
 
         this.active = !this.active;
     }
@@ -77,7 +114,7 @@ class Drowpdown
 
 function collectPrgDropdowns()
 {
-    const elements = document.querySelectorAll('#PrgCplusplus, #PrgCSharp, #PrgJs, #PrgPhp');
+    const elements = document.querySelectorAll('.PrgLanguage');
 
                 elements.forEach(element => 
                 {
@@ -95,7 +132,7 @@ function collectPrgDropdowns()
 
 function OnClickDropdown(self)
 {
-    let dropdowncurrent = Drowpdown.GetDropdownByBtn(self);
+    let dropdowncurrent = Drowpdown.GetDropdownByElement(self);
 
     if(dropdowncurrent)
     {
