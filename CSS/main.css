@@ -136,7 +136,7 @@ img
 
 #PrgButton div
 {
-    
+    pointer-events: none;
 }
 
 #sunBorder
