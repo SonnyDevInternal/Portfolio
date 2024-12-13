@@ -19,6 +19,30 @@ class Color
         return colorOut;
     }
     
+    static stringToColor(string)
+    {
+        let vals = string.replace(/rgba?\(|\)/g, '').split(',')
+        .map(callback => callback.trim());
+
+        switch(vals.length)
+        {
+            case 3:
+                return new Color(parseInt(vals[0]), parseInt(vals[1]),
+                    parseInt(vals[2]), 255
+                );
+            break;
+
+            case 4:
+                return new Color(parseInt(vals[0]), parseInt(vals[1]),
+                    parseInt(vals[2]), parseInt(vals[3])
+                );
+            break;
+
+            default:
+                throw new Error("Invalid Color string");
+                break;
+        }
+    }
 
     getHex()
     {
@@ -27,6 +51,11 @@ class Color
             return (this.r << 16) | (this.g << 8) | this.b;
         }
         return (this.a << 24) | (this.r << 16) | (this.g << 8) | this.b;
+    }
+
+    getString()
+    {
+        return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
     }
 
     sub(color)
@@ -111,6 +140,212 @@ class Color
     }
 }
 
+class ThreadWorker
+{
+    constructor(fn, useWorker)
+    {
+        this.useWorker = useWorker;
+        this.dataOut = null;
+
+        this.hasEndEvent = false;
+        this.onExecuted = null;
+
+        this.hasThreadFinished = true; 
+
+        if(useWorker) //real thread
+        {
+            this.worker = null;
+
+            this.blob = new Blob([`
+                onmessage = function(event) {
+                    try {
+                        const callback = ${fn.toString()};
+                        const result = callback(...event.data);
+                        postMessage(result);
+                    } catch (error) {
+                        postMessage({ error: error.message });
+                    }
+                }
+            `], { type: 'application/javascript' });
+
+            this.CreateThread();
+        }
+        else //fake thread
+        {
+            this.threadID = -1;
+            this.callback = fn;
+        }
+    }
+
+    SetCallback(callbackFn)
+    {
+        if(typeof callbackFn === "function")
+        {
+            this.hasEndEvent = true;
+            this.onExecuted = callbackFn;
+        }
+        else
+            this.hasEndEvent = false;
+    }
+
+    DestroyThread() //Call after done with Thread!
+    {
+        if(this.useWorker)
+        {
+            this.worker.terminate();
+            URL.revokeObjectURL(this.url);
+
+            this.worker = null;
+        }
+        else
+        {
+            if(this.threadID !== -1)
+            {
+                clearTimeout(this.threadID);
+                this.threadID = -1;
+            }
+        }
+    }
+
+    ExecuteThread(...parameters) //Call to call Function
+    {
+        if(this.worker == null)
+            this.CreateThread();
+
+        this.hasThreadFinished = false;
+
+        if(this.useWorker)
+        {
+           this.worker.postMessage(parameters);
+        }
+        else
+        {
+            this.threadID = setTimeout(() => this.OnFakeThreadRun(parameters), 0);
+        }
+    }
+
+    CreateThread() //Call only if you deleted the last Thread
+    {
+        if (this.worker !== null) 
+            return;
+
+        if(this.useWorker) //real thread
+        {
+            this.url = URL.createObjectURL(this.blob);
+            this.worker = new Worker(this.url);
+    
+            this.worker.onerror = (error) => {
+                this.OnThreadError(error);
+            }
+
+            this.worker.onmessage = (event) => {
+                this.OnThreadFinish(event);
+            }
+        }
+    }
+
+    OnThreadError(error)
+    {
+        console.error(`Thread Error: ${error.message} at ${error.filename}:${error.lineno}`);
+        this.DestroyThread();
+    }
+
+    OnThreadFinish(event)
+    {
+        this.hasThreadFinished = true; 
+        this.dataOut = event?.data ?? null;
+
+        if(this.hasEndEvent)
+            this.onExecuted();
+    }
+
+    OnFakeThreadRun(params)
+    {
+        if (this.threadID === -1) 
+            return;
+
+        try 
+        {
+            const result = this.callback(...params);
+
+            this.OnThreadFinish({ data: result });
+
+            this.threadID = -1;
+        } 
+        catch (error) 
+        {
+            this.OnThreadError(error);
+        }
+    }
+}
+
+class HtmlColorSwitcher
+{
+    constructor(self, color, callback)
+    {
+        this.htmlSelf = self;
+        this.selfWorker = new ThreadWorker(this.OnInvokeFThread, false);
+
+        this.callback = callback;
+
+        this.finished = false;
+    }
+
+    IsReady()
+    {
+        return (this.finished === true);
+    }
+
+    OnInvokeFThread(selfHtml, originalColor, color, time, self) 
+    {
+        const start = new Date().getTime();
+        const end = start + time;
+
+        const interpolate = (start, end, percentage) =>
+            start + (end - start) * (percentage / 100);
+      
+        const animate = () => {
+          const tickNow = new Date().getTime();
+          const tickElapsed = tickNow - start;
+          
+          const percentage = (tickElapsed / (end - start)) * 100;
+
+          let c = originalColor;
+      
+          if (percentage >= 100) 
+          {
+            selfHtml.style.backgroundColor = color.getString();
+            self.finished = true;
+
+            if(typeof self.callback === "function")
+                self.callback();
+
+            return;
+          }
+
+          selfHtml.style.backgroundColor = new Color(
+            interpolate(c.r, color.r, percentage),
+            interpolate(c.g, color.g, percentage),
+            interpolate(c.b, color.b, percentage),
+            interpolate(c.a, color.a, percentage)
+          ).getString();
+      
+          requestAnimationFrame(animate);
+        };
+      
+        animate();
+    }
+
+    DoAnimation(color, time)
+    {
+        this.finished = false;
+
+        let currentColor = Color.stringToColor(window.getComputedStyle(this.htmlSelf).backgroundColor);
+        
+        this.selfWorker.ExecuteThread(this.htmlSelf, currentColor, color, time, this);
+    }
+}
+
 function getAbsolutePosition(element)
 {
     const rect = element.getBoundingClientRect();
@@ -128,6 +363,14 @@ function getAbsolutePosition(element)
 function removeFromList(list, index)
 {
     list.splice(index, 1);
+}
+
+function removeFromListSearch(list, item)
+{
+    let index = list.indexOf(item);
+
+    if(index > -1)
+        list.splice(index, 1);
 }
 
 function getRandomInt(max) 
