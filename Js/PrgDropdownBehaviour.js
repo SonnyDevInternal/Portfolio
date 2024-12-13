@@ -2,15 +2,36 @@ let dropdownList = [];
 
 class Drowpdown
 {
+    static hiddenLogoPath = "https://www.svgrepo.com/show/421575/question-mark.svg";
+    static grayColor = new Color(209, 209, 209, 255);
+
     constructor(selfHtml) 
     {
         this.selfHtmlObj = selfHtml;
         this.active = false;
 
+        this.firstTime = false;
+
+        //Read Only style!
+        let stylReference = window.getComputedStyle(selfHtml);
+
+        this.originalColor = Color.stringToColor(stylReference.backgroundColor);
+        
+        this.orignalImgPath = this.GetLanguageLogo().src;
+        this.logoStyles = {};
+
+        let logoStyleRef = window.getComputedStyle(this.GetLanguageLogo());
+
+        for (let style of logoStyleRef) {
+            this.logoStyles[style] = logoStyleRef.getPropertyValue(style);
+        }
+
         this.children = this.GetChildren();
         this.btnHtmlObj = this.GetButtonObject();
 
         this.childrenStyleList = [];
+
+        this.colorswitcher = new HtmlColorSwitcher(selfHtml, null, null);
     }
 
     static GetDropdownByElement(element)
@@ -33,6 +54,11 @@ class Drowpdown
         return null;
     }
 
+    GetLanguageLogo()
+    {
+        return this.selfHtmlObj.parentElement.querySelector('img');
+    }
+
     GetChildren()
     {
         if(this.children == null)
@@ -53,6 +79,13 @@ class Drowpdown
                 {
                     let objOut = this.children[f];
                     removeFromList(this.children, f);
+
+                    let buttonChildren = Array.from(objOut.querySelectorAll('*')); //exclude Button Children from list
+
+                    for(let c = 0; c < buttonChildren.length; c++)
+                    {
+                        removeFromListSearch(this.children, buttonChildren[c]);
+                    }
     
                     return objOut;
                 }
@@ -87,22 +120,65 @@ class Drowpdown
         }
     }
 
-    UpdateVisibility(visible)
+    UpdateLogo(visible)
     {
-        this.UpdateChildren(visible);
+        let logo = this.GetLanguageLogo();
 
         if(!visible)
         {
-            
+            logo.src = Drowpdown.hiddenLogoPath;
+
+            //low budget ahhh approach
+
+            logo.style.width = "40px"; 
+            logo.style.height = "40px"; 
+            logo.style.marginTop = "0px";
+
+            logo.style.filter = ""; 
         }
         else
         {
+            logo.src = this.orignalImgPath;
 
+            for (let style of logo.style) 
+            {
+                logo.style[style] = this.logoStyles[style];
+            }
+
+            logo.style.filter = this.logoStyles["filter"];
+        }
+    }
+
+    UpdateVisibility(visible)
+    {
+        this.UpdateLogo(visible);
+        this.UpdateChildren(visible);
+        this.DrawAnimation(visible);
+    }
+
+    DrawAnimation(visible)
+    {
+        if(!visible)
+        {
+            if(!this.firstTime)
+            {
+                this.firstTime = true;
+                this.colorswitcher.DoAnimation(Drowpdown.grayColor, 0);
+            }
+            else
+                this.colorswitcher.DoAnimation(Drowpdown.grayColor, 800);
+        }
+        else
+        {
+            this.colorswitcher.DoAnimation(this.originalColor, 800);
         }
     }
 
     OnClick()
-    {
+    {        
+        if(!this.colorswitcher.IsReady()) //Animation not finished yet
+            return;
+
         console.log("clicked item with ID: " + this.selfHtmlObj.id);
         console.log("show item? : " + this.active);
 
@@ -116,18 +192,20 @@ function collectPrgDropdowns()
 {
     const elements = document.querySelectorAll('.PrgLanguage');
 
-                elements.forEach(element => 
-                {
-                    let dropdown = new Drowpdown(element);
+    elements.forEach(element => {
+        let dropdown = new Drowpdown(element);
 
-                    dropdown.GetButtonObject().addEventListener('click', function(event) 
-                    {
-                        OnClickDropdown(event.target);
-                    });
+        dropdown.GetButtonObject().addEventListener('click', function(event) {
+            OnClickDropdown(event.target);
+        });
+        
+        dropdown.OnClick();
 
-                    dropdownList.push(dropdown); 
-                }
-                );
+        dropdown.UpdateVisibility(dropdown.active);
+        dropdown.active = !dropdown.active;
+
+        dropdownList.push(dropdown); 
+    });
 }
 
 function OnClickDropdown(self)
