@@ -69,6 +69,27 @@ img
 {
 }
 
+.PrgLanguage label
+{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+.ListPrgLanguages img
+{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #PrgCplusplus
 {
     position: absolute;
@@ -108,7 +129,7 @@ img
     background-color: black;
     
     width: inherit;
-    height: 10px;
+    height: 18px;
 
     position: relative;
 }
@@ -223,8 +244,7 @@ img
 {
     0%
     {
-        height: 354px;
-        width: 100%;
+        color: inherit;
     }
     100%
     {
