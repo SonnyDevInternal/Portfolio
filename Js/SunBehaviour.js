@@ -14,6 +14,9 @@ let TickCount = new Date().getTime();
 
 function UpdateRays()
 {
+    if(hasHiddenSun)
+        return;
+    
     const raySizeMax = 1.4;
     const raySizeMin = 1;
 
