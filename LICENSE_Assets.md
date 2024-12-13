@@ -34,7 +34,8 @@ This project makes use of third-party assets, which are not owned by me. These t
   - C++ logo from [SVGRepo](https://www.svgrepo.com/show/341723/cplusplus.svg)
   - C# logo from [SVGRepo](https://www.svgrepo.com/show/373533/csharp2.svg)
   - PHP logo from [SVGRepo](https://www.svgrepo.com/show/373969/php2.svg)
-  - Javascript log from [SVGRepo](https://www.svgrepo.com/show/349419/javascript.svg)
+  - Javascript logo from [SVGRepo](https://www.svgrepo.com/show/349419/javascript.svg)
+  - Question Mark logo from [SVGRepo](https://www.svgrepo.com/show/421575/question-mark.svg)
 
 If you believe your work is used here without proper attribution, please contact me, and I will address it promptly.  
 
