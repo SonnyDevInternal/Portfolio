@@ -36,6 +36,8 @@ This project makes use of third-party assets, which are not owned by me. These t
   - PHP logo from [SVGRepo](https://www.svgrepo.com/show/373969/php2.svg)
   - Javascript logo from [SVGRepo](https://www.svgrepo.com/show/349419/javascript.svg)
   - Question Mark logo from [SVGRepo](https://www.svgrepo.com/show/421575/question-mark.svg)
+  - Rust Logo from [SVGRepo](https://www.svgrepo.com/show/372942/rust.svg)
+  - Java Logo from [SVGRepo](https://www.svgrepo.com/show/353924/java.svg)
 
 If you believe your work is used here without proper attribution, please contact me, and I will address it promptly.  
 
