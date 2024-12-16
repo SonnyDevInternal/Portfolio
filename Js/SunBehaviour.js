@@ -14,9 +14,6 @@ let TickCount = new Date().getTime();
 
 function UpdateRays()
 {
-    if(hasHiddenSun)
-        return;
-    
     const raySizeMax = 1.4;
     const raySizeMin = 1;
 
@@ -73,4 +70,15 @@ function UpdateRays()
     }
 }
 
-setInterval(UpdateRays, 1000 / 80);
+function UpdateSun()
+{
+    const animSun = () =>{
+        if(!hasHiddenSun)
+            UpdateRays();
+        requestAnimationFrame(animSun);
+    }
+
+    animSun();
+}
+
+UpdateSun();

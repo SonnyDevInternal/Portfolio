@@ -3,6 +3,7 @@ let TickCountBG = new Date().getTime();
 let backgroundCanvas = document.getElementById("BackgroundCanvas");
 let backgroundContext = backgroundCanvas.getContext("2d");
 
+var canSpawnStars = false;
 var sunScrollPercantage = 0;
 var sunBorder = document.getElementById("sunBorder");
 var sunContainer = document.getElementById("sContainer");
@@ -78,19 +79,33 @@ let starRandomStarposList =
 let curRndListIndex = 0;
 let isStarLeft = false;
 
+let starShape = createStarPath(5, 2.5, 5);
 
-function DrawBackground() 
+function createStarPath(points, innerRadius, outerRadius) 
+{
+    const path = new Path2D();
+    const angle = Math.PI / points;
+
+    for (let i = 0; i < 2 * points; i++) {
+        const r = (i % 2 === 0) ? outerRadius : innerRadius;
+        const xPos = r * Math.cos(i * angle);
+        const yPos = r * Math.sin(i * angle);
+        if (i === 0) {
+            path.moveTo(xPos, yPos);
+        } else {
+            path.lineTo(xPos, yPos);
+        }
+    }
+    path.closePath();
+    return path;
+}
+
+
+function DrawStars()
 {
     const timeToSpawnStars = 0.5;
-
-    backgroundContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-    const colorToAdd = colorToDrawBottom.sub(colorToDrawTop).div(rangePerDimension);
-    
-    let colorCopy = colorToDrawTop.copy();
-
-    const width = window.innerWidth;
-    const height = Math.ceil(window.innerHeight / rangePerDimension); 
+    const maxStarCount = 25;
+    const maxLivetimeStars = 1;
 
     let currentTick = new Date().getTime();
 
@@ -98,21 +113,7 @@ function DrawBackground()
 
     TickCountBG = currentTick;
 
-    for (let i = 0; i < rangePerDimension; i++) 
-    {
-        const y = height * i;
-        colorCopy = colorCopy.add(colorToAdd).clamp();
-
-        const color = `rgb(${Math.round(colorCopy.r)}, ${Math.round(colorCopy.g)}, ${Math.round(colorCopy.b)})`;
-
-        backgroundContext.fillStyle = color;
-        backgroundContext.fillRect(0, y, width, height + 1);
-    }
-
-    const maxStarCount = 25;
-    const maxLivetimeStars = 1;
-
-    if(sunScrollPercantage >= 70)
+    if(canSpawnStars)
     {
         if(timeSpawnStars >= timeToSpawnStars && starList.length < maxStarCount)
         {
@@ -136,6 +137,8 @@ function DrawBackground()
 
     if(isStarLeft)
     {
+        DrawBackground();
+
         for(let p = 0; p < starList.length; p++)
         {
             let cachedStar = starList[p];
@@ -163,19 +166,10 @@ function DrawBackground()
                 backgroundContext.globalAlpha = alphaValStar;
                 backgroundContext.fillStyle = `rgb(255, 242, 0)`;
     
-                backgroundContext.beginPath();
-                const angle = Math.PI / points;
-    
-                for (let i = 0; i < 2 * points; i++)
-                {
-                  const r = (i % 2 === 0) ? radius : innerRadius;
-                  const xPos = x + r * Math.cos(i * angle);
-                  const yPos = y + r * Math.sin(i * angle);
-                  backgroundContext.lineTo(xPos, yPos);
-                }
-    
-                backgroundContext.closePath();
-                backgroundContext.fill();
+                backgroundContext.save();
+                backgroundContext.translate(x, y);
+                backgroundContext.fill(starShape);
+                backgroundContext.restore();
     
                 cachedStar.timeAlive += deltaTime;
             }
@@ -184,10 +178,46 @@ function DrawBackground()
     }
 }
 
+function DrawBackground() 
+{
+    backgroundContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    const colorToAdd = colorToDrawBottom.sub(colorToDrawTop).div(rangePerDimension);
+    
+    let colorCopy = colorToDrawTop.copy();
+
+    const width = window.innerWidth;
+    const height = Math.ceil(window.innerHeight / rangePerDimension); 
+
+    for (let i = 0; i < rangePerDimension; i++) 
+    {
+        const y = height * i;
+        colorCopy = colorCopy.add(colorToAdd).clamp();
+
+        const color = `rgb(${Math.round(colorCopy.r)}, ${Math.round(colorCopy.g)}, ${Math.round(colorCopy.b)})`;
+
+        backgroundContext.fillStyle = color;
+        backgroundContext.fillRect(0, y, width, height + 1);
+    }
+}
+
+function SelfLoopBackground()
+{
+    const animBackground = () => {
+        if(canSpawnStars || isStarLeft)
+            DrawStars();
+        
+        requestAnimationFrame(animBackground);
+    }
+
+    animBackground();
+}
 function updateCanvasDimension()
 {
     backgroundCanvas.width = window.innerWidth;
     backgroundCanvas.height = window.innerHeight;
+
+    updateScroll();
 }
 
 function updateScroll() {
@@ -197,7 +227,7 @@ function updateScroll() {
     const sunBoarderAbsPos = getAbsolutePosition(sunBorder).top;
 
     const maxScrollHeight = sunBoarderAbsPos;
-    sunScrollPercantage = Math.min(scrollY / maxScrollHeight, 1) * 100;
+    sunScrollPercantage = Math.abs(Math.min(scrollY / maxScrollHeight, 1) * 100);
 
     if (sunScrollPercantage >= 100.0) 
     {
@@ -216,6 +246,8 @@ function updateScroll() {
             hasHiddenSun = false;
             sunContainer.style.display = "";
         }
+
+        canSpawnStars = (sunScrollPercantage >= 70);
 
         const interpolate = (start, end, percentage) =>
             start + (end - start) * (percentage / 100);
@@ -243,12 +275,13 @@ function updateScroll() {
     }
 
     console.log("Offset is now: ", sunScrollPercantage);
-}
 
-setInterval(DrawBackground, 1000 / 80);
+    DrawBackground();
+}
 
 window.addEventListener("resize", updateCanvasDimension);
 window.addEventListener("scroll", updateScroll);
 
 updateCanvasDimension();
 updateScroll();
+SelfLoopBackground();

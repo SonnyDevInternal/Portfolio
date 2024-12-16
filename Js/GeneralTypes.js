@@ -281,7 +281,7 @@ class ThreadWorker
 
 class HtmlColorSwitcher
 {
-    constructor(self, color, callback)
+    constructor(self, callback)
     {
         this.htmlSelf = self;
         this.selfWorker = new ThreadWorker(this.OnInvokeFThread, false);
@@ -296,7 +296,7 @@ class HtmlColorSwitcher
         return (this.finished === true);
     }
 
-    OnInvokeFThread(selfHtml, originalColor, color, time, self) 
+    OnInvokeFThread(self, originalColor, color, time) 
     {
         const start = new Date().getTime();
         const end = start + time;
@@ -311,6 +311,7 @@ class HtmlColorSwitcher
           const percentage = (tickElapsed / (end - start)) * 100;
 
           let c = originalColor;
+          let selfHtml = self.htmlSelf;
       
           if (percentage >= 100) 
           {
@@ -342,7 +343,7 @@ class HtmlColorSwitcher
 
         let currentColor = Color.stringToColor(window.getComputedStyle(this.htmlSelf).backgroundColor);
         
-        this.selfWorker.ExecuteThread(this.htmlSelf, currentColor, color, time, this);
+        this.selfWorker.ExecuteThread(this, currentColor, color, time);
     }
 }
 

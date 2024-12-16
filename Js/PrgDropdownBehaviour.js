@@ -31,7 +31,7 @@ class Drowpdown
 
         this.childrenStyleList = [];
 
-        this.colorswitcher = new HtmlColorSwitcher(selfHtml, null, null);
+        this.colorswitcher = new HtmlColorSwitcher(selfHtml, null);
     }
 
     static GetDropdownByElement(element)
