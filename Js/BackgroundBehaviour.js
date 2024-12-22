@@ -239,7 +239,8 @@ function updateScroll() {
             timeSpawnStars = 0;
         }
         return;
-    } else 
+    } 
+    else 
     {
         if (hasHiddenSun) 
         {
@@ -274,9 +275,15 @@ function updateScroll() {
         sunContainer.style.top = sunScrollPercantage + "%";
     }
 
-    console.log("Offset is now: ", sunScrollPercantage);
+    Log("Offset is now: ", sunScrollPercantage);
 
-    DrawBackground();
+    requestAnimationFrame(() => {
+        DrawBackground();
+        
+        if(canSpawnStars || isStarLeft)
+            DrawStars();
+    });
+
 }
 
 window.addEventListener("resize", updateCanvasDimension);

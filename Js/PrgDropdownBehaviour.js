@@ -30,8 +30,15 @@ class Drowpdown
         this.btnHtmlObj = this.GetButtonObject();
 
         this.childrenStyleList = [];
+        this.callbackList = [];
 
-        this.colorswitcher = new HtmlColorSwitcher(selfHtml, null);
+        this.colorswitcher = new HtmlColorSwitcher(selfHtml, () => this.OnInternalReadyCallback());
+    }
+
+    static GetAllDropdowns() //returns a copyied list of all Dropdowns
+    {
+        let dropdownsOut = [...dropdownList];
+        return dropdownsOut;
     }
 
     static GetDropdownByElement(element)
@@ -52,6 +59,37 @@ class Drowpdown
         }
 
         return null;
+    }
+
+    IsReady()
+    {
+        return this.colorswitcher.IsReady();
+    }
+
+    AddOnReadyCallback(callback)
+    {
+        if(typeof callback === 'function')
+            this.callbackList.push(callback);
+        else
+            LogError("callback passed wasnt a function! it was: " + typeof callback);
+    }
+
+    RemoveOnReadyCallback(callback)
+    {
+        if(typeof callback === 'function')
+            removeFromListSearch(this.callbackList, callback);
+        else
+        LogError("callback passed wasnt a function! it was: " + typeof callback);
+    }
+
+    OnInternalReadyCallback() //when is finished, call all callbacks
+    {
+        Log("finished Callback!");
+
+        for(let l = 0; l < this.callbackList.length; l++)
+        {
+            this.callbackList[l](this, this.active);
+        }
     }
 
     GetLanguageLogo()
@@ -179,8 +217,8 @@ class Drowpdown
         if(!this.colorswitcher.IsReady()) //Animation not finished yet
             return;
 
-        console.log("clicked item with ID: " + this.selfHtmlObj.id);
-        console.log("show item? : " + this.active);
+        Log("clicked item with ID: " + this.selfHtmlObj.id);
+        Log("show item? : " + this.active);
 
         this.UpdateVisibility(this.active);
 
@@ -218,7 +256,7 @@ function OnClickDropdown(self)
     }
     else
     {
-        console.log("Drop down class Object wasnt found!");
+        Log("Drop down class Object wasnt found!");
     }
     
 }

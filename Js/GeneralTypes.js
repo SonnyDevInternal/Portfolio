@@ -363,7 +363,12 @@ function getAbsolutePosition(element)
 
 function removeFromList(list, index)
 {
-    list.splice(index, 1);
+    if(index < list.length)
+        list.splice(index, 1);
+    else
+        return false;
+
+    return true;
 }
 
 function removeFromListSearch(list, item)
@@ -372,9 +377,33 @@ function removeFromListSearch(list, item)
 
     if(index > -1)
         list.splice(index, 1);
+    else
+        return false;
+
+    return true;
 }
 
 function getRandomInt(max) 
 {
     return Math.floor(Math.random() * max);
+}
+
+function hrefSelf(url)
+{
+    if(typeof url === "string")
+        window.location.href = url;
+}
+
+let debug = false;
+
+function Log(object)
+{
+    if(debug)
+    console.log(object);
+}
+
+function LogError(object)
+{    
+    if(debug)
+    console.error(object);
 }

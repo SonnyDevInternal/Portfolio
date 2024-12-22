@@ -9,6 +9,9 @@
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
 
         <link rel="stylesheet" href="./CSS/main.css">
+        <link rel="stylesheet" href="./CSS/Staticbar.css">
+        <link rel="stylesheet" href="./CSS/Sun.css">
+        <link rel="stylesheet" href="./CSS/PrgLanguages.css">
     </head>
    
     <body style="background-color: rgba(0, 0, 0, 0);">
@@ -23,6 +26,8 @@
         <div style="margin-top: -8px; margin-left: -0.6%; width: 102%; height: 130px;">
 
         </div>
+
+        <div class="ProgressGoal"></div>
 
         <div class="ScrollAblePage">
             <label style="font-weight: bold; font-size: 35px;">
@@ -44,6 +49,8 @@
             </label>        
         </div>
 
+        <div style="height: 50px;"></div>
+
         <div class="ScrollAblePage">
             <label style="font-weight: bold; font-size: 35px;">
                 My Programming Languages:
@@ -63,8 +70,8 @@
 
             </label>
 
-            <ul style="list-style: none; padding: 0; margin-left: 0%; size: 10%;">
-
+            <ul style="list-style: none; padding: 0; margin-left: 0%; size: 10%;" id="ListPrgs">
+                <div class="ProgressGoal"></div>
                 <li class="ListPrgLanguages">
                     <div>
                         <img style="width: 36px; height: 36px; margin-top: 4px; filter: invert(1) sepia(1) hue-rotate(98deg) saturate(100) contrast(0.3);" src="https://www.svgrepo.com/show/341723/cplusplus.svg" alt="C++ Logo">
@@ -218,14 +225,15 @@
 
         <div id="sunBorder"></div>
 
+        <div class="ProgressGoal"></div>
 
         <div class="ScrollAblePage">
-            <label style="font-weight: bold; font-size: 35px;">
+            <label style="font-weight: bold; font-size: 35px; color: rgb(88, 88, 88);">
                 My Personal Projects:
                 <br /> <br />
             </label>
 
-            <label style="font-size: 25px;">
+            <label style="font-size: 25px; color: rgb(88, 88, 88);">
                 I have spent countless hours coding and made many Projects but what <br />
                 can i say about those, well most of them i made as a Hobby, <br />
                 im talking about either Applications or Reverse Engineering Tools, <br />
@@ -234,8 +242,91 @@
                 i have gotten so much Experience in so many Fields that im actually ready to <br />
                 do anything coding-related!<br /><br />
 
-                Anyways here are some of my Projects Filtered by Language: <br /><br />
+                Anyways here are some of my Projects: <br /><br />
             </label>
+
+            <div style="height: 40px;"></div>
+
+            <ul style="list-style: none; padding: 0;">
+                <li class="ListProjects">
+                    <div style="width: 100%; height: 50px; background-color: white;">
+                        <label style="font-size: 25px; text-align: center; color: rgb(88, 88, 88);">
+                            Escape The Joinkler
+                        </label>
+                    </div>
+
+                    <img style="cursor: pointer; width: 100%; height: 86.5%;" onclick="hrefSelf(null)">
+                    </img>
+
+                    <div style="background-color: rgba(70, 70, 70, 0.651); width: 100%; height: 23%; top: -25%; position: relative;">
+                        <label style="color: white;">
+                            An Joke Project i made in an Group with Talented People, its about an Popular Meme called the Joinkler.
+                        </label>
+                    </div>
+                </li>
+
+                <li class="ListProjects">
+                    <div style="width: 100%; height: 50px; background-color: white;">
+                        <label style="font-size: 25px; text-align: center; color: rgb(88, 88, 88);">
+                            Esslingen Fighter
+                        </label>
+                    </div>
+
+                    <img src="Assets/Esslingen-Fighter.png" style="cursor: pointer; width: 100%; height: 86.5%;" onclick="hrefSelf('https://sonnydevinternal.github.io/Esslingen-Fighter/')">
+                    </img>
+
+                    <div style="background-color: rgba(70, 70, 70, 0.651); width: 100%; height: 23%; top: -25%; position: relative;">
+                        <label style="color: white;">
+                            My First big Phaser Game, its about an Street Rowdy who accidentally flew through an Wormhole back to the Knights Era
+                        </label>
+                    </div>
+                </li>
+
+                <li class="ListProjects">
+                    <div style="width: 100%; height: 50px; background-color: white;">
+                        <label style="font-size: 25px; text-align: center; color: rgb(88, 88, 88);">
+                            Day and Night
+                        </label>
+                    </div>
+
+                    <img src="Assets/Day_and_Night.png" style="cursor: pointer; width: 100%; height: 86.5%;" onclick="hrefSelf('https://sonnydevinternal.github.io/Day_and_Night/')">
+                    </img>
+                    
+                    <div style="background-color: rgba(70, 70, 70, 0.651); width: 100%; height: 23%; top: -25%; position: relative;">
+                        <label style="color: white;">
+                            My First Phaser game i ever made, its barely finished since it was my first time coding and i spent more time drawing.
+                        </label>
+                    </div>
+                </li>
+            </ul>
+            <div style="height: 10px;"></div>
+        </div>
+
+        <div style="height: 60px;"></div>
+
+        <div class="ProgressGoal"></div>
+
+        <div class="ScrollAblePage">
+            <label style="font-weight: bold; font-size: 35px; color: rgb(88, 88, 88);">
+                Contact Me!
+                <br /> <br />
+            </label>
+
+            <label style="font-size: 25px; color: rgb(88, 88, 88);">
+                If you liked my Portfolio or are just in shortage of Employes, <br />
+                i would be happy if you would Contact me.<br /><br />
+
+
+                You can do this by Pressing on the Navbars Icons <br />
+                on the Supported Platforms i have, <br />
+                or just through my Email which you can find by pressing the Mail Icon ✉️<br /><br />
+
+                Im still in my Learning Phase and Experimenting of my Designing style <br />
+                so please dont take my Portfolio as is since im going to try <br />
+                and improve and change it when i can ❤️.<br />
+            </label>
+
+            <div style="height: 50px;"></div>
         </div>
 
         <!--End of non Static Elements is here-->
@@ -248,6 +339,16 @@
             <label id="MainHeaderText">
                 Sonny Hasegan
             </label>
+
+            <canvas id="StaticProgressbar"></canvas>
+
+            <label class="ProgressIcon" style="bottom: -3px; left: 0px;">❤️</label>
+
+            <label class="ProgressIcon" style="bottom: -3px; left: 0px;">💻</label>
+
+            <label class="ProgressIcon" style="bottom: -3px; left: 0px;">🕐</label>
+
+            <label class="ProgressIcon" style="bottom: -3px; left: 0px;">📧</label>
 
             <ul id="RefsHeader">
                 <li style="display: inline-block; margin-left: 10px;">
@@ -279,10 +380,12 @@
 
         <!--Scripts and stuff-->
         <script type="text/javascript" src="Js/GeneralTypes.js"></script>
-        <script type="text/javascript" src="Js/StaticBarBehaviour.js"></script>
+        <script type="text/javascript" src="Js/Staticbar/StaticBarBehaviour.js"></script>
+        <script type="text/javascript" src="Js/Staticbar/Progressbar.js"></script>
         <script type="text/javascript" src="Js/SunBehaviour.js"></script>
         <script type="text/javascript" src="Js/BackgroundBehaviour.js"></script>
         <script type="text/javascript" src="Js/PrgDropdownBehaviour.js"></script>
+        <script type="text/javascript" src="Js/ScrollItem.js"></script>
     </body>
 
 </html>
